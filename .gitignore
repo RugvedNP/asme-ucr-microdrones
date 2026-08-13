@@ -1,0 +1,18 @@
+# Arduino / PlatformIO build output
+build/
+.pio/
+*.hex
+*.bin
+*.elf
+*.map
+
+# Arduino IDE
+*.ino.cpp
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
