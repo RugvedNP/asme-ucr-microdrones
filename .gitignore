@@ -1,18 +1,18 @@
-# Arduino / PlatformIO build output
+# Arduino build output
 build/
-.pio/
-*.hex
 *.bin
 *.elf
+*.hex
 *.map
 
-# Arduino IDE
-*.ino.cpp
+# Arduino CLI local caches, if you compile with arduino-cli here
+.arduino15/
+arduino-cli.yaml
 
 # OS junk
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Editor
-.vscode/*
-!.vscode/extensions.json
+# Editor junk
+*.swp

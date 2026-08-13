@@ -1,91 +1,83 @@
 # ASME @ UCR Microdrones
 
-Build, test, and fly ESP32-based micro quadcopters. This repo holds the
-club's Claude Code workflows, bench-test firmware, and (once cloned) the
-actual flight firmware for both build tracks.
+Code, firmware, and test scripts for the club's ESP32-based micro quadcopter
+builds. If you're a member picking this up for the first time, start here.
 
-New to the club or this repo? Start here, in order:
+## What's in this repo
 
-1. Read the **Safety first** section below before touching any hardware.
-2. Skim **Repo structure** so you know where things live.
-3. Follow **Quick start** to get the code on your machine.
-4. Open [`CLAUDE.md`](CLAUDE.md) and paste Section 0 into Claude Code before
-   asking it anything about our hardware — it gives Claude the pin numbers,
-   parts, and safety rules so it doesn't guess wrong.
+| Path | What it is |
+|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | The club's Claude Code master prompt — copy/paste sections from it to get AI help on wiring reviews, test sketches, PID tuning, blackbox analysis, etc. Read this first, it explains our exact hardware. |
+| [`build1-flix/flix/`](build1-flix/flix) | The [flix](https://github.com/okalachev/flix) firmware itself, pulled in as a submodule (see [Getting the code](#getting-the-code) below). This is the real flight firmware for Build 1. |
+| [`build1-flix/test-scripts/`](build1-flix/test-scripts) | Our own bench-test sketches — smoke test, tethered hover demo, pre-flight checklist. Run these **before** flying, in that order. See the [README in that folder](build1-flix/test-scripts/README.md) for details. |
+| [`docs/SOURCES.md`](docs/SOURCES.md) | Line-by-line citations for the test scripts — what was reused from flix, what's a standard protocol implementation, what's original. |
+
+Build 2 (ESP-FC / Betaflight platform, winter quarter) doesn't have anything
+here yet.
 
 ## Safety first
 
 - **Never spin motors with propellers attached unless you mean to fly.**
-  `smoke_test.ino` and `preflight_check.ino` are bench tests — props off.
-- **`tethered_hover_demo.ino` is the only sketch meant to run with props on**,
-  and only with the drone tethered or hand-restrained.
-- Every generated test sketch prints clear PASS/FAIL/WARN/SKIP results to
-  Serial at 115200 baud — read them before proceeding to the next step.
-- If a sketch tells you NO-GO, don't fly. Fix the flagged issue and rerun.
+- Every test sketch prints clear PASS/FAIL/WARN/SKIP results to Serial —
+  read them before doing anything else.
+- The tethered hover demo is the first (and only) test script where props
+  should be on. Tether or hand-restrain the drone for that one.
+- If you're not sure a test script is safe for what you're about to do,
+  ask an officer before running it.
 
-## Repo structure
+## Getting the code
 
-```
-asme-ucr-microdrones/
-├── README.md              <- you are here
-├── CLAUDE.md               Master prompt: paste into Claude Code for hardware context
-├── docs/
-│   └── SOURCES.md          Where every line of generated code came from
-└── build1-flix/            Fall quarter build (flix platform)
-    ├── flix/                Upstream firmware (git submodule, github.com/okalachev/flix)
-    └── test-scripts/        Our bench-test sketches, see its own README
-        ├── smoke_test/
-        ├── tethered_hover_demo/
-        └── preflight_check/
-```
-
-Build 2 (ESP-FC / winter quarter) will get its own `build2-espfc/` folder
-the same way once that work starts.
-
-## Quick start
-
-Clone with submodules so the `flix` firmware comes down too — a plain
-`git clone` leaves that folder empty:
+This repo uses a **git submodule** for the flix firmware, so a plain
+`git clone` will leave `build1-flix/flix/` empty. Clone it like this:
 
 ```bash
 git clone --recurse-submodules https://github.com/RugvedNP/asme-ucr-microdrones.git
 ```
 
-Already cloned without `--recurse-submodules`? Fetch it after the fact:
+Already cloned without `--recurse-submodules`? Run this from inside the repo:
 
 ```bash
 git submodule update --init --recursive
 ```
 
-To run a bench test sketch: open `build1-flix/test-scripts/<name>/<name>.ino`
-in Arduino IDE (see that folder's [README](build1-flix/test-scripts/README.md)
-for the exact board/library setup), flash it, and watch the Serial Monitor
-at 115200 baud.
+## Setting up Arduino IDE
 
-## Using Claude Code on this project
+Needed for both the flix firmware and our test scripts in
+`build1-flix/test-scripts/`:
 
-[`CLAUDE.md`](CLAUDE.md) is a library of ready-to-paste prompts for common
-tasks — smoke testing, wiring review, Betaflight config review, blackbox log
-analysis, and more. Paste Section 0 (project context) first in any new
-Claude Code session, then paste whichever numbered section matches what
-you're doing.
+1. Install [Arduino IDE](https://www.arduino.cc/en/software) (version 2 recommended).
+2. Install **ESP32 core, version 3.3.10** via Boards Manager — see
+   [Espressif's install guide](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html#installing-using-arduino-ide).
+3. Install the **`FlixPeriph`** library via Library Manager — it's the IMU
+   driver used by both the real firmware and our test scripts.
+4. Select board **"WEMOS D1 MINI ESP32"** and the correct port.
+5. Open Serial Monitor at **115200 baud** before running anything.
 
-Generated code should always be sanity-checked by a human against the real
-wiring before it touches hardware — Claude Code is very capable but not
-infallible, especially on pin assignments.
+Full flix-specific setup details (flashing, ground control software,
+simulator, etc.) are in [`build1-flix/flix/README.md`](build1-flix/flix/README.md)
+and [`build1-flix/flix/docs/`](build1-flix/flix/docs).
 
-## Attribution
+## Typical first-build workflow
 
-Test sketches in `build1-flix/test-scripts/` reuse real config and driver
-patterns from the upstream `flix` firmware rather than reinventing them.
-See [`docs/SOURCES.md`](docs/SOURCES.md) for exactly what came from where.
+1. Solder up your drone following flix's [assembly docs](build1-flix/flix/docs/assembly.md)
+   and the wiring in [Section 2 of `CLAUDE.md`](CLAUDE.md#2-wiring-review-paste-after-section-0).
+2. **Props off.** Run [`build1-flix/test-scripts/smoke_test/`](build1-flix/test-scripts/smoke_test).
+   Fix anything that doesn't PASS before moving on.
+3. **Props on, tethered.** Run [`tethered_hover_demo/`](build1-flix/test-scripts/tethered_hover_demo).
+4. **Props off again.** Run [`preflight_check/`](build1-flix/test-scripts/preflight_check)
+   as your final go/no-go before flashing the real flix firmware and flying.
+5. Flash flix itself and fly, following [`build1-flix/flix/docs/usage.md`](build1-flix/flix/docs/usage.md).
 
-## Officer notes
+## Getting help
 
-- Save every working Claude Code output to this repo — don't let good
-  sketches live only in someone's chat history.
-- If a generated sketch needs a fix, just tell Claude Code what's wrong
-  ("Motor 2 should be on GPIO14, not GPIO15") rather than regenerating
-  from scratch.
-- Keep [`docs/SOURCES.md`](docs/SOURCES.md) updated whenever new firmware
-  is generated from the flix or esp-fc repos.
+Stuck? Paste [`CLAUDE.md`](CLAUDE.md) Section 0 into Claude Code along with
+whatever's going wrong (compile error, weird sensor reading, motor spinning
+the wrong way) — it has the full hardware context and can usually get you
+unstuck faster than digging through docs alone.
+
+## Contributing
+
+Save anything useful back to this repo so the next person doesn't have to
+regenerate it — new test scripts go in `build1-flix/test-scripts/` (or a new
+`build2-espfc/` folder once that track starts), reference material and
+write-ups go in `docs/`.
