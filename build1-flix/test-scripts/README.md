@@ -1,7 +1,7 @@
 # Build 1 (flix) test scripts
 
 Bench/pre-flight sketches for the flix platform, generated from the prompts in
-[`../../CLAUDE.md`](../../CLAUDE.md). Each is a self-contained Arduino sketch
+[`../../docs/prompts/`](../../docs/prompts). Each is a self-contained Arduino sketch
 (folder name matches the `.ino` file, as Arduino IDE requires) reusing the
 same wiring, PWM settings, and `FlixPeriph` IMU driver as the real firmware
 in [`../flix`](../flix), so results here are representative of the real

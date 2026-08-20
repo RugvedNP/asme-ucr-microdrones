@@ -34,12 +34,15 @@ scripts is sourced from it.
 - The 45° tilt cutoff, 100Hz non-blocking safety loop, and ARM/STOP command
   handling in `tethered_hover_demo.ino`. flix's own disarm tilt is 120°
   ([`flix/safety.ino:11`](https://github.com/okalachev/flix/blob/7312aeff325302dd554cd968b598203c47ebc815/flix/safety.ino#L11)) —
-  this repo uses the tighter 45° from `CLAUDE.md` Section 3 since it's a
+  this repo uses the tighter 45° from the hover-demo spec since it's a
   bench safety guard, not flix's real in-flight disarm threshold.
 - The SBUS frame sync/decode in `preflight_check.ino` — a standard public
   SBUS bit-unpacking scheme (11-bit channels packed across 22 bytes).
   flix doesn't implement SBUS decoding in the files referenced above, and
   esp-fc's CRSF/receiver code was never opened for this.
 - All PASS/FAIL/WARN/SKIP threshold logic, drift/level math, and the overall
-  test structure — driven by the Section 1/3/8 specs in
-  [`../CLAUDE.md`](../CLAUDE.md), not by either repo.
+  test structure — driven by the club's own specs in
+  [`prompts/01-smoke-test.md`](prompts/01-smoke-test.md),
+  [`prompts/03-tethered-hover.md`](prompts/03-tethered-hover.md), and
+  [`prompts/08-preflight-check.md`](prompts/08-preflight-check.md), not by
+  either repo.
